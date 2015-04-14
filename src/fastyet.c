@@ -59,7 +59,7 @@ mrb_mruby_fastyet_gem_init(mrb_state* mrb)
 {
   struct RClass *c;
   c = mrb_define_module(mrb, "Fastyet");
-  mrb_define_class_method(mrb, c, "run", fastyet_run, MRB_ARGS_REQ(1));      /* 15.2.19.6.1 */
+  mrb_define_class_method(mrb, c, "run", fastyet_run, MRB_ARGS_REQ(1));
 }
 
 
