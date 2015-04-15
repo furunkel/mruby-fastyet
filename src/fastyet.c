@@ -18,8 +18,9 @@ fastyet_run(mrb_state *mrb, mrb_value self)
   clock_t c1, c2;
   mrb_value retval;
   double secs;
+  int flags = 0;
 
-  mrb_get_args(mrb, "s*", &filename, &filename_len, &argv, &argc);
+  mrb_get_args(mrb, "si*", &filename, &filename_len, &flags, &argv, &argc);
 
   file = fopen(filename, "r");
   if (!file) {
@@ -34,6 +35,10 @@ fastyet_run(mrb_state *mrb, mrb_value self)
   }
   mrb_define_global_const(run_mrb, "ARGV", ARGV);
 
+#ifdef MRB_ENABLE_JIT
+  run_mrb->run_flags = flags;
+#endif
+
   c1 = clock();
   result = mrb_load_file(run_mrb,  file);
   c2 = clock();
@@ -41,7 +46,7 @@ fastyet_run(mrb_state *mrb, mrb_value self)
   fclose(file);
 
   if (mrb->exc) {
-    
+    mrb_raise(mrb, E_RUNTIME_ERROR, "benchmark failed");
   }
 
   mrb_close(run_mrb);
@@ -54,12 +59,19 @@ fastyet_run(mrb_state *mrb, mrb_value self)
   return retval;
 }
 
+#ifndef MRB_ENABLE_JIT
+#define MRB_RUN_NORMAL 0
+#define MRB_RUN_JIT 0
+#endif
+
 void
 mrb_mruby_fastyet_gem_init(mrb_state* mrb)
 {
   struct RClass *c;
   c = mrb_define_module(mrb, "Fastyet");
   mrb_define_class_method(mrb, c, "run", fastyet_run, MRB_ARGS_REQ(1));
+  mrb_define_const(mrb, c, "RUN_NORMAL", mrb_fixnum_value(MRB_RUN_NORMAL));
+  mrb_define_const(mrb, c, "RUN_JIT", mrb_fixnum_value(MRB_RUN_JIT));
 }
 
 
