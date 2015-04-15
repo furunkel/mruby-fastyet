@@ -1,7 +1,7 @@
 #from http://www.bagley.org/~doug/shootout/bench/lists/lists.ruby
 
 NUM = 300
-SIZE = (5000 * ARGV[0]).to_i
+SIZE = (5000 * ARGV[0].to_f).to_i
 
 def test_lists()
   # create a list of integers (Li1) from 1 to SIZE

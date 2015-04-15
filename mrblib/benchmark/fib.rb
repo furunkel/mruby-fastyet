@@ -1,6 +1,6 @@
 # Fib 39
 
-SIZE = (39 * ARGV[0]).to_i
+SIZE = (39 * ARGV[0].to_f).to_i
 
 def fib n
   return n if n < 2
