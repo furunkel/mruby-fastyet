@@ -5,9 +5,19 @@ module Fastyet
 
     def benchmark!(filename)
       data = []
-      0.2.step(1.0, STEP) do |n|
-        result = run(filename, RUN_NORMAL, n)
-        data << result
+
+      profiles = if RUN_NORMAL != RUN_JIT
+        {:normal => RUN_NORMAL, :jit => RUN_JIT}
+      else
+        {:normal => RUN_NORMAL}
+      end
+      profiles.each do |name, flags|
+        line = []
+        0.2.step(1.0, STEP) do |n|
+          result = run(filename, flags, n)
+          line << result
+        end
+        data << line
       end
       Gnuplot.plot data, plot_filename(filename)
     end
